@@ -7,10 +7,11 @@ class Form extends React.Component{
 
         this.state = {
             name: '',
-            email: '',
+            email: ' ',
             password: '',
             user: {},
-            isLoggedIn: false
+            isLoggedIn: false,
+            userType: 'customer'
         }
     }
 
@@ -32,10 +33,16 @@ class Form extends React.Component{
         })
     }
 
+    userTypeHandler = (e) => {
+        this.setState({
+            userType: e.target.value
+        })
+    }
+
     submitHandler = async (e) => {
         e.preventDefault();
 
-        const {name, email, password, user, isLoggedIn} = this.state;
+        const {name, email, password, userType} = this.state;
         const {type} = this.props;
         
         const userObj = { 
@@ -44,7 +51,7 @@ class Form extends React.Component{
             password
         };
 
-        const response = await fetch(`http://localhost:8000/${type}`, {
+        const response = await fetch(`http://localhost:8000/${userType}/${type}`, {
             method: "POST",
             body: JSON.stringify(userObj),
             headers: {
@@ -63,29 +70,33 @@ class Form extends React.Component{
         }
     }
 
-
     render(){
         const {name, email, password, user, isLoggedIn} = this.state;
         const {type} = this.props;
 
         return(
         <>
-        {isLoggedIn ? <Profile user = {user}/> : <>  {type === "sign-up" ? <h1> {type} Form - Hii {name} </h1> : <h1> {type} Form</h1>}
+        {isLoggedIn ? <Profile user = {user}/> : <>  {type === "signup" ? <h1> {type} Form - Hello {name} </h1> : <h1> {type} Form</h1>}
           <form onSubmit={this.submitHandler} >
-            {type === "sign-up" && <input name="name" type="text" placeholder="Jhon Dev" value={name} onChange={this.nameChangeHandler}/>}
+            {type === "signup" && <>Name:- <input name="name" type="text" placeholder="Jhon Dev" value={name} onChange={this.nameChangeHandler}/></>}
             <br/>
-            <input name="email" type="email" placeholder="user@gmail.com" value={email} onChange={this.emailChangeHandler}/>
+            E-mail:- <input name="email" type="email" placeholder="user@gmail.com" value={email} onChange={this.emailChangeHandler}/>
             <br/>
-            <input name="password" type="password" placeholder="Enter Password" value={password} onChange={this.passwordChangeHandler}/>
+            Password:- <input name="password" type="password" placeholder="Enter Password" value={password} onChange={this.passwordChangeHandler}/>
             <br/>
             <button type="submit">{type}</button>
           </form>
+          <br/>
+            <div>
+                Client<input type="radio" name="userType" value="client" onChange={this.userTypeHandler}/>
+                <br/>
+                Customer<input type="radio" name="userType" value="customer" onChange={this.userTypeHandler}/>
+            </div>
         </>
         }
         </>
         )
     }
-    
 }
 
 export default Form;

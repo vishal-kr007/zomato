@@ -15,7 +15,7 @@ const customerSchema = new mongoose.Schema({
     },
     phone:{
         type: Number,
-        unique: true
+        default: 0
     }
 },
 {
